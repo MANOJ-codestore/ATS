@@ -1,0 +1,69 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101827">
+<title>TalentFlow — Mini ATS</title>
+<link rel="stylesheet" href="atsstyle.css">
+<script src="atsindex.js" defer></script>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><div class="brandmark"></div><span class="brandname">TalentFlow</span></div>
+  <div class="navlabel">WORKSPACE</div>
+  <a class="nav active" data-view="overview"><span class="ico">▦</span><span class="navtext">Overview</span></a>
+  <a class="nav" data-view="candidates"><span class="ico">♙</span><span class="navtext">Candidates</span></a>
+  <a class="nav" data-view="pipeline"><span class="ico">☷</span><span class="navtext">Hiring pipeline</span></a>
+  <a class="nav" data-view="reports"><span class="ico">▥</span><span class="navtext">Reports</span></a>
+  <div class="sidebar-bottom"><div class="navlabel">PREFERENCES</div><a class="nav" data-view="settings"><span class="ico">⚙</span><span class="navtext">Settings</span></a>
+    <div class="team"><div class="avatar"></div><div class="team-info"><b style="color:white;font-size:12px"> M N Manoj</b><small>Hiring manager</small></div></div>
+  </div>
+</aside>
+<main class="main">
+<header class="topbar"><div class="crumb">Workspace&nbsp; / &nbsp;<b id="crumb">Overview</b></div><div class="top-right"><button class="iconbtn" title="Notifications" onclick="toast('You are all caught up.')">♧</button><div class="profile"><div class="avatar"></div><span>M N Manoj</span></div></div></header>
+<div class="content">
+<section id="overview" class="view active">
+  <div class="welcome"><div><div class="eyebrow" id="todayLabel">YOUR HIRING WORKSPACE</div><h1>Welcome to TalentFlow, Manoj 👋</h1><p>Here's what's happening with your hiring pipeline today.</p></div><button class="btn primary" onclick="openModal()">＋ Add candidate</button></div>
+  <div class="stats">
+    <div class="stat"><div class="stat-top">Total candidates <span class="stat-icon">♙</span></div><div class="stat-number" id="totalStat">0</div><div class="trend">↗ <span>All candidate records</span></div></div>
+    <div class="stat"><div class="stat-top">Active applications <span class="stat-icon">▤</span></div><div class="stat-number" id="activeStat">0</div><div class="trend">↗ <span>Not hired or rejected</span></div></div>
+    <div class="stat"><div class="stat-top">Interviews scheduled <span class="stat-icon">◷</span></div><div class="stat-number" id="interviewStat">0</div><div class="trend"><span>Currently at interview stage</span></div></div>
+    <div class="stat"><div class="stat-top">Offers accepted <span class="stat-icon">✓</span></div><div class="stat-number" id="hiredStat">0</div><div class="trend"><span>Hired candidates</span></div></div>
+  </div>
+  <div class="panels">
+    <div class="panel"><div class="panel-head"><div><h2>Hiring pipeline</h2><div class="sub">Candidate distribution by stage</div></div><select class="select" id="pipelinePeriod" aria-label="Pipeline period"><option>All time</option></select></div><div class="pipeline" id="pipelineStats"></div></div>
+    <div class="panel"><div class="panel-head"><div><h2>Hiring activity</h2><div class="sub">Candidate records by applied month</div></div></div><div class="chart-area"><div class="chart-legend"><span><i class="dot"></i>Applications</span><span><i class="dot orange"></i>Interviews</span></div><svg class="chart" id="activityChart" viewBox="0 0 500 140" preserveAspectRatio="none" aria-label="Hiring activity chart"></svg><div class="chart-labels" id="chartLabels"></div></div></div>
+  </div>
+  <div class="panels">
+    <div class="panel"><div class="panel-head"><div><h2>Recent candidates</h2><div class="sub">Your latest additions to the talent pool</div></div><button class="btn" onclick="switchView('candidates')">View all →</button></div><div class="table-wrap"><table><thead><tr><th>Candidate</th><th>Position</th><th>Stage</th><th>Applied</th></tr></thead><tbody id="recentRows"></tbody></table></div></div>
+    <div class="panel"><div class="panel-head"><div><h2>Candidate sources</h2><div class="sub">Where applicants came from</div></div></div><div class="source-list" id="sourceList"></div></div>
+  </div>
+</section>
+<section id="candidates" class="view">
+  <div class="welcome"><div><div class="eyebrow">TALENT DIRECTORY</div><h1>All candidates</h1><p>Manage candidate profiles and track every application.</p></div><button class="btn primary" onclick="openModal()">＋ Add candidate</button></div>
+  <div class="tablepanel"><div class="table-toolbar"><div><h2>Candidate directory</h2><div class="sub" id="candidateCount">All candidates</div></div><div class="toolbar-right"><div class="searchbox">⌕ <input id="search" placeholder="Search name, role, email…" aria-label="Search candidates" oninput="renderTable()"></div><select class="select" id="stageFilter" aria-label="Filter by stage" onchange="renderTable()"><option value="">All stages</option><option>Applied</option><option>Screening</option><option>Interview</option><option>Offer</option><option>Hired</option><option>Rejected</option></select><button class="btn" onclick="exportCSV()">↓ Export</button></div></div><div class="table-wrap"><table><thead><tr><th>Candidate</th><th>Position</th><th>Stage</th><th>Source</th><th>Applied date</th><th>Update</th></tr></thead><tbody id="candidateRows"></tbody></table></div><div class="table-foot"><span id="tableFoot">Showing candidates</span><div class="pager"><button class="current" type="button" aria-label="Page 1">1</button></div></div></div>
+</section>
+<section id="pipeline" class="view"><div class="welcome"><div><div class="eyebrow">HIRING WORKFLOW</div><h1>Hiring pipeline</h1><p>Move candidates through each step of your hiring process.</p></div><button class="btn primary" onclick="openModal()">＋ Add candidate</button></div><div class="board" id="board"></div></section>
+<section id="reports" class="view"><div class="welcome"><div><div class="eyebrow">INSIGHTS & ANALYTICS</div><h1>Hiring reports</h1><p>A quick view of your recruitment funnel.</p></div><button class="btn" onclick="exportCSV()">↓ Export report</button></div><div class="stats" id="reportStats"></div><div class="panel"><div class="panel-head"><div><h2>Stage distribution</h2><div class="sub">Candidate count by current stage</div></div></div><div class="pipeline" id="reportPipeline"></div></div></section>
+<section id="settings" class="view"><div class="welcome"><div><div class="eyebrow">YOUR WORKSPACE</div><h1>Settings</h1><p>Configure your demo workspace.</p></div></div><div class="panel settingsbox"><h2>TalentFlow workspace</h2><p>Candidate records are saved in this browser using local storage. No account or server is required for this demo.</p><p><b>Data management</b><br>Use Export to download candidate records as CSV. Reset demo data restores the original sample candidates.</p><button class="btn" onclick="resetData()">↻ Reset demo data</button><p class="notice">Data is local to this browser and device. It is not shared with other users or automatically backed up.</p></div></section>
+</div>
+</main>
+</div>
+<div class="modal-back" id="modalBack" role="dialog" aria-modal="true" aria-labelledby="modalTitle" onclick="if(event.target===this)closeModal()">
+<div class="modal"><h2 id="modalTitle">Add a candidate</h2><p id="modalSubtitle">Add a new applicant to your hiring pipeline.</p>
+<form id="candidateForm"><div class="formgrid">
+<div class="field"><label for="name">Full name *</label><input id="name" name="name" required maxlength="100" placeholder="e.g. Priya Sharma"></div>
+<div class="field"><label for="email">Email *</label><input id="email" name="email" type="email" required maxlength="150" placeholder="priya@email.com"></div>
+<div class="field"><label for="role">Position *</label><input id="role" name="role" required maxlength="100" placeholder="e.g. Product Designer"></div>
+<div class="field"><label for="stage">Hiring stage</label><select id="stage" name="stage"><option>Applied</option><option>Screening</option><option>Interview</option><option>Offer</option><option>Hired</option><option>Rejected</option></select></div>
+<div class="field"><label for="source">Candidate source</label><select id="source" name="source"><option>LinkedIn</option><option>Referral</option><option>Company website</option><option>Job board</option><option>Other</option></select></div>
+<div class="field"><label for="date">Applied date</label><input id="date" name="date" type="date" required></div>
+<div class="field full"><label for="notes">Notes (optional)</label><input id="notes" name="notes" maxlength="500" placeholder="Skills, interview notes, or reminders"></div>
+</div><div class="modal-actions"><button class="btn" type="button" onclick="closeModal()">Cancel</button><button class="btn primary" type="submit" id="saveCandidateBtn">Save candidate</button></div></form></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+</body>
+</html>
